@@ -139,7 +139,7 @@ int xmodemReceive(unsigned char *dest, int destsz)
 			*p++ = c;
 		}
 
-		if (xbuff[1] == (unsigned char)(~xbuff[2]) && 
+		if (xbuff[1] == (unsigned char)((~xbuff[2]) & 0xFF) && /* DSP is 16 bits wide so it need to &0xFF*/
 			(xbuff[1] == packetno || xbuff[1] == (unsigned char)packetno-1) &&
 			check(crc, &xbuff[3], bufsz)) {
 			if (xbuff[1] == packetno)	{
@@ -212,7 +212,7 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 			xbuff[0] = SOH; bufsz = 128;
 #endif
 			xbuff[1] = packetno;
-			xbuff[2] = ~packetno;
+			xbuff[2] = (~packetno) & 0xFF; /* DSP is 16 bits wide so it need to &0xFF*/
 			c = srcsz - len;
 			if (c > bufsz) c = bufsz;
 			if (c > 0) {
