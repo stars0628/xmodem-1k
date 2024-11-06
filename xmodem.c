@@ -48,6 +48,16 @@
 #define MAXRETRANS 25
 #define TRANSMIT_XMODEM_1K
 
+int _inbyte(unsigned short timeout)
+{
+	// if timeout return < 0, if get data return data
+}
+
+void _outbyte(int c)
+{
+	
+}
+
 static int check(int crc, const unsigned char *buf, int sz)
 {
 	if (crc) {
@@ -139,7 +149,7 @@ int xmodemReceive(unsigned char *dest, int destsz)
 					memcpy (&dest[len], &xbuff[3], count);
 					len += count;
 				}
-				++packetno;
+				if(++packetno % 256 == 0) packetno = 1;
 				retrans = MAXRETRANS+1;
 			}
 			if (--retrans <= 0) {
@@ -228,7 +238,7 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 					if ((c = _inbyte(DLY_1S)) >= 0 ) {
 						switch (c) {
 						case ACK:
-							++packetno;
+							if(++packetno % 256 == 0) packetno = 1;
 							len += bufsz;
 							goto start_trans;
 						case CAN:
